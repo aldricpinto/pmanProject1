@@ -201,10 +201,47 @@ def breadthFirstSearch(problem: SearchProblem):
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    ss = problem.getStartState()
-    costCheck = problem.getCostOfActions(ss)
-    print(costCheck)
+    finalActionList = []
+    
+    # Initialising Fringe representation : 'PriorityQueue'
+    pqueueForUCS = util.PriorityQueue()
+    
+    # actionMap to maintain a map of 'states' and the 'action' (i.e direction : N,S,E,W etc) as a List which will be returned 
+    # when a goal state is achieved.
+    actionMap = {problem.getStartState():[]}
+    pqueueForUCS.push(problem.getStartState(),0)
+    closedSet = set()
+    
+    closedSet.add(problem.getStartState())
+    
+    
+    while not pqueueForUCS.isEmpty():
+        cheapestState = pqueueForUCS.pop()
+
+
+        if problem.isGoalState(cheapestState):
+            finalActionList = actionMap[cheapestState]
+            return finalActionList
+
+            
+        successorsList = problem.getSuccessors(cheapestState)
+        
+        for successor,action, stepCost in successorsList:
+            if not successor in closedSet:
+                closedSet.add(successor)
+                initialPath = actionMap[cheapestState]
+                sucessorPath = [action]
+                updatedPath = [*initialPath,*sucessorPath] 
+                
+                updatedCost = problem.getCostOfActions(updatedPath)
+                
+                pqueueForUCS.push(successor,updatedCost)
+                
+                actionMap[successor]=updatedPath
+    
+    
     util.raiseNotDefined()
+    return finalActionList
 
 def nullHeuristic(state, problem=None):
     """
