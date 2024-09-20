@@ -18,7 +18,6 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
-
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -253,6 +252,47 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    finalActionList = []
+    
+    # Initialising Fringe representation : 'PriorityQueue'
+    pqueueForAstar = util.PriorityQueue()
+    
+    # actionMap to maintain a map of 'states' and the 'action' (i.e direction : N,S,E,W etc) as a List which will be returned 
+    # when a goal state is achieved.
+    actionMap = {problem.getStartState():[]}
+    pqueueForAstar.push(problem.getStartState(),0+heuristic(problem.getStartState(),problem))
+    closedSet = set()
+    
+    # closedSet.add(problem.getStartState())
+    
+    
+    while not pqueueForAstar.isEmpty():
+        cheapestState = pqueueForAstar.pop()
+
+
+        if problem.isGoalState(cheapestState):
+            finalActionList = actionMap[cheapestState]
+            return finalActionList
+
+        if cheapestState not in closedSet:
+            closedSet.add(cheapestState)    
+        successorsList = problem.getSuccessors(cheapestState)
+        
+        for successor,action, stepCost in successorsList:
+            if not successor in closedSet:
+                # closedSet.add(successor)
+                initialPath = actionMap[cheapestState]
+                sucessorPath = [action]
+                updatedPath = [*initialPath,*sucessorPath] 
+                
+                gofn = problem.getCostOfActions(updatedPath)
+                fofn = gofn + heuristic(successor,problem)
+                
+                pqueueForAstar.push(successor,fofn)
+                
+                actionMap[successor]=updatedPath
+    return finalActionList
+    
     util.raiseNotDefined()
 
 
