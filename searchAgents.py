@@ -343,13 +343,17 @@ class CornersProblem(search.SearchProblem):
             
             if not hitsWall:
                 nextState = (nextx, nexty)
-                # print('This is nxt : ' ,nextState)
-                if nextState in self.corners:
-                    indexToSetTrue = self.corners.index(nextState)
-                    toCheckcornersList = list(toCheckcornersTuple)
-                    # print(toCheckcornersList)
-                    toCheckcornersList[indexToSetTrue] = 1
-                    toCheckcornersTuple = tuple(toCheckcornersList)
+                # print('This is nxt : ' ,self.corners)
+                
+                # Here I'm checking if the next State (nextState) is a corner or not
+                # If it is a corner then, I'm setting the croner as visited (1) for that successor state
+                for corner in self.corners:
+                    if nextState == corner:
+                        indexToSetTrue = self.corners.index(corner)
+                        toCheckcornersList = list(toCheckcornersTuple)
+                        # print(toCheckcornersList)
+                        toCheckcornersList[indexToSetTrue] = 1
+                        toCheckcornersTuple = tuple(toCheckcornersList)
                 
                 newSuccessorState = (nextState,toCheckcornersTuple)
                 successors.append((newSuccessorState,action,cost))
@@ -387,9 +391,39 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    
+    
+    
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    
+    currentState,cornersTuple = state
+    finalDistanceList = []
+    heuristicVal = 0
+    
+    if problem.isGoalState(state):
+        return heuristicVal
+    
+    cornersList = list(cornersTuple)
+    
+    for unVisitedCornerIndex in range(len(cornersList)):
+        if cornersList[unVisitedCornerIndex] == 0:
+            heuristicDistance = util.manhattanDistance(currentState,corners[unVisitedCornerIndex])
+            finalDistanceList.append(heuristicDistance)
+
+    
+    # heuristicVal = min(finalDistanceList)
+    
+    # returning min(finalDistanceList) as the heuristic resulted in expansion of 1475 nodes
+    
+    
+    heuristicVal = max(finalDistanceList)
+    
+    # returning max(finalDistanceList) as the heuristic resulted in expansion of 1136 nodes
+    # This is because max provides a broader picture and makes the agent want to advance to a state to reach the furthest corner,
+    # than just focussing on a nearer corner and exploring less promising paths that appear to be optimal at first but actually aren't !
+    return heuristicVal
+
+    #return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -483,7 +517,33 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    
+    finalDistanceList = []
+    heuristicVal = 0
+    foodCoordinatesList = foodGrid.asList()
+    # print(foodCoordinatesList)
+    
+    if problem.isGoalState(state):
+        return heuristicVal
+
+
+    for foodCordinate in foodCoordinatesList:
+        # heuristicDistance = util.manhattanDistance(position,foodCordinate)
+        # Tried manhattanDistance heuristic but,
+        # max of Manhattan Distace heuristic expanded 9551 nodes and was failing food_heuristic_grade_tricky.test
+        # this is because Manhattan Distance heuristic is not taking into consideration the fact that there are walls within the maze
+        # Hence, expands unecessary nodes.
+        
+        heuristicDistance = mazeDistance(position,foodCordinate,problem.startingGameState)
+        # max of mazeDistance heuristic expanded 4137 nodes and passed all test cases !
+        # this is because Maze Distance heuristic is taking into consideration the fact that there are walls within the maze
+        # Hence, prevents expansion of uneccessary nodes.
+        
+        finalDistanceList.append(heuristicDistance)
+
+    heuristicVal = max(finalDistanceList)
+    return heuristicVal
+    # return 0
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -514,6 +574,8 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
+        uniformCostSearchResult = search.bfs(problem)
+        return uniformCostSearchResult
         util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -550,6 +612,14 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
+        # I will have to check if the given state has food by matching co-ordinates of state with co-ordinates of food
+        foodCordinates = self.food.asList()
+        for foodCoordinate in foodCordinates:
+            if foodCoordinate == state:
+                return True
+            
+                
+        return False
         util.raiseNotDefined()
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:

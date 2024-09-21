@@ -98,7 +98,7 @@ def depthFirstSearch(problem: SearchProblem):
     
     
     stackForDfs.push((problem.getStartState(),finalActionList))
-    print('Initial State of Stack : ',stackForDfs.list)
+    # print('Initial State of Stack : ',stackForDfs.list)
     
     # using a closedSet to maintain a track of nodes that have already been visited
     closedSet = set()
@@ -148,7 +148,7 @@ def breadthFirstSearch(problem: SearchProblem):
     
     QueueForBfs.push((problem.getStartState(),finalActionList))
     
-    print('Initial State of Queue : ',QueueForBfs.list)
+    # print('Initial State of Queue : ',QueueForBfs.list)
     closedSet = set()
     
     while not QueueForBfs.isEmpty():
