@@ -157,7 +157,7 @@ def breadthFirstSearch(problem: SearchProblem):
         
         if problem.isGoalState(firstInFirstOutState):
             return actionList
-        
+
         if  firstInFirstOutState in closedSet:
             continue
         
