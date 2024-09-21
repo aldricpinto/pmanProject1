@@ -93,54 +93,44 @@ def depthFirstSearch(problem: SearchProblem):
     
     finalActionList = []
     
-    # Initialising Fringe representation : 'Stack'
+    #Fringe representation used is : 'Stack'
     stackForDfs = util.Stack()
     
-    # actionMap to maintain a map of 'states' and the 'action' (i.e direction : N,S,E,W etc) as a List which will be returned 
-    # when a goal state is achieved.
     
-    actionMap = {problem.getStartState():[]}
-    print('This is actionMap keys: ',actionMap.keys())
-    stackForDfs.push(problem.getStartState())
+    stackForDfs.push((problem.getStartState(),finalActionList))
     print('Initial State of Stack : ',stackForDfs.list)
     
     # using a closedSet to maintain a track of nodes that have already been visited
     closedSet = set()
     
     while not stackForDfs.isEmpty():
-        lastInFirstOutState = stackForDfs.pop()
+        lastInFirstOutState,actionList = stackForDfs.pop()
         # print('Popped: ', lastInFirstOutState)
         
         if problem.isGoalState(lastInFirstOutState):
-            finalActionList = actionMap[lastInFirstOutState]
-            # print(finalActionList)
-            return finalActionList
+            return actionList
         
-        if not lastInFirstOutState in closedSet:
+        if lastInFirstOutState in closedSet:
+            continue
             
-            closedSet.add(lastInFirstOutState)
+        closedSet.add(lastInFirstOutState)
             # print('In closedSet : ',closedSet)
         
         successorsList = problem.getSuccessors(lastInFirstOutState)
         
         for successor,action, stepCost in successorsList:
-            # print('at actionMap : ',actionMap)
             # print('successor',successor)
             if not successor in closedSet:
-                stackForDfs.push(successor)
-                initialPath = actionMap[lastInFirstOutState]
+                initialPath = actionList
                 # print('action',action)
                 # print('initialPath',initialPath)
                 sucessorPath = [action]
                 # print('sucessorPath',sucessorPath)
                 
                 updatedPath = [*initialPath,*sucessorPath] 
-                
+                stackForDfs.push((successor,updatedPath))
                 # print('updatedPath',updatedPath)
                 # print('successor',successor)
-                
-                actionMap[successor]=updatedPath
-                # print('at actionMap inside if : ',actionMap)
                 
     util.raiseNotDefined()
     return finalActionList
@@ -152,46 +142,39 @@ def breadthFirstSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     finalActionList = []
     
-    # Initialising Fringe representation : 'Queue'
+    # Fringe representation used for BFS : 'Queue'
     QueueForBfs = util.Queue()
     
-    # actionMap to maintain a map of 'states' and the 'action' (i.e direction : N,S,E,W etc) as a List which will be returned 
-    # when a goal state is achieved.
     
+    QueueForBfs.push((problem.getStartState(),finalActionList))
     
-    actionMap = {problem.getStartState():[]}
-    print('This is actionMap keys: ',actionMap.keys())
-    QueueForBfs.push(problem.getStartState())
     print('Initial State of Queue : ',QueueForBfs.list)
     closedSet = set()
-    closedSet.add(problem.getStartState())
     
     while not QueueForBfs.isEmpty():
-        firstInFirstOutState = QueueForBfs.pop()
+        firstInFirstOutState,actionList = QueueForBfs.pop()
         # print('Popped: ', firstInFirstOutState)
-        if problem.isGoalState(firstInFirstOutState):
-            finalActionList = actionMap[firstInFirstOutState]
-            # print(finalActionList)
-            return finalActionList
         
+        if problem.isGoalState(firstInFirstOutState):
+            return actionList
+        
+        if  firstInFirstOutState in closedSet:
+            continue
+        
+        closedSet.add(firstInFirstOutState)
+            
         successorsList = problem.getSuccessors(firstInFirstOutState)
         
+        # print(QueueForBfs.list)
+        
+        
         for successor,action, stepCost in successorsList:
-            # print('at actionMap : ',actionMap)
-            # print('successor',successor)
+
             if not successor in closedSet:
-                closedSet.add(successor)
-                QueueForBfs.push(successor)
-                initialPath = actionMap[firstInFirstOutState]
-                # print('action',action)
-                # print('initialPath',initialPath)
+                initialPath = actionList
                 sucessorPath = [action]
-                # print('sucessorPath',sucessorPath)
                 updatedPath = [*initialPath,*sucessorPath] 
-                # print('updatedPath',updatedPath)
-                # print('successor',successor)
-                actionMap[successor]=updatedPath
-                # print('at actionMap inside if : ',actionMap)
+                QueueForBfs.push((successor,updatedPath))
                 
     util.raiseNotDefined()
     return finalActionList
@@ -202,45 +185,51 @@ def uniformCostSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     finalActionList = []
     
-    # Initialising Fringe representation : 'PriorityQueue'
+    #Fringe representation for UCS used is : 'PriorityQueue'
     pqueueForUCS = util.PriorityQueue()
-    
-    # actionMap to maintain a map of 'states' and the 'action' (i.e direction : N,S,E,W etc) as a List which will be returned 
-    # when a goal state is achieved.
-    actionMap = {problem.getStartState():[]}
-    pqueueForUCS.push(problem.getStartState(),0)
+    pqueueForUCS.push((problem.getStartState(),finalActionList),0)
     closedSet = set()
     
-    closedSet.add(problem.getStartState())
     
     
     while not pqueueForUCS.isEmpty():
-        cheapestState = pqueueForUCS.pop()
+        cheapestState,actionList = pqueueForUCS.pop()
 
 
         if problem.isGoalState(cheapestState):
-            finalActionList = actionMap[cheapestState]
-            return finalActionList
+            return actionList
 
-            
-        successorsList = problem.getSuccessors(cheapestState)
+        if cheapestState in closedSet:
+            continue
         
+        closedSet.add(cheapestState)
+               
+        successorsList = problem.getSuccessors(cheapestState)
+        # print('This is heap: ',pqueueForUCS.heap)
+        # As seen from util that priority queue stores [cost,count,stateActionListTuple]
+        checkingStateinPrQueueForUcs = [stateAndActions[0] for cost,count,stateAndActions in pqueueForUCS.heap]
+
         for successor,action, stepCost in successorsList:
-            if not successor in closedSet:
-                closedSet.add(successor)
-                initialPath = actionMap[cheapestState]
+
+            if not successor in closedSet :
+                
+                initialPath = actionList
                 sucessorPath = [action]
                 updatedPath = [*initialPath,*sucessorPath] 
                 
                 updatedCost = problem.getCostOfActions(updatedPath)
                 
-                pqueueForUCS.push(successor,updatedCost)
+                pqueueForUCS.push((successor,updatedPath),updatedCost)
                 
-                actionMap[successor]=updatedPath
+            
+                    
+                
     
     
     util.raiseNotDefined()
     return finalActionList
+
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -249,51 +238,51 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     finalActionList = []
     
-    # Initialising Fringe representation : 'PriorityQueue'
+    # Fringe representation for A* used is : 'PriorityQueue'
     pqueueForAstar = util.PriorityQueue()
     
-    # actionMap to maintain a map of 'states' and the 'action' (i.e direction : N,S,E,W etc) as a List which will be returned 
-    # when a goal state is achieved.
-    actionMap = {problem.getStartState():[]}
-    pqueueForAstar.push(problem.getStartState(),0+heuristic(problem.getStartState(),problem))
+    
+    pqueueForAstar.push((problem.getStartState(),finalActionList),heuristic)
     closedSet = set()
     
-    # closedSet.add(problem.getStartState())
     
     
     while not pqueueForAstar.isEmpty():
-        cheapestState = pqueueForAstar.pop()
+        cheapestState,actionList = pqueueForAstar.pop()
 
 
         if problem.isGoalState(cheapestState):
-            finalActionList = actionMap[cheapestState]
-            return finalActionList
+            return actionList
 
-        if cheapestState not in closedSet:
-            closedSet.add(cheapestState)    
+        if cheapestState in closedSet:
+            continue
+        
+        closedSet.add(cheapestState)    
+            
         successorsList = problem.getSuccessors(cheapestState)
         
         for successor,action, stepCost in successorsList:
-            if not successor in closedSet:
-                # closedSet.add(successor)
-                initialPath = actionMap[cheapestState]
+            if not successor in closedSet :
+                
+                initialPath = actionList
                 sucessorPath = [action]
                 updatedPath = [*initialPath,*sucessorPath] 
                 
                 gofn = problem.getCostOfActions(updatedPath)
                 fofn = gofn + heuristic(successor,problem)
                 
-                pqueueForAstar.push(successor,fofn)
-                
-                actionMap[successor]=updatedPath
+                pqueueForAstar.push((successor,updatedPath),fofn)
+            
+            
+    util.raiseNotDefined()            
     return finalActionList
     
-    util.raiseNotDefined()
 
 
 # Abbreviations
