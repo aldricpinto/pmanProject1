@@ -110,17 +110,14 @@ def depthFirstSearch(problem: SearchProblem):
         if problem.isGoalState(lastInFirstOutState):
             return actionList
         
-        if lastInFirstOutState in closedSet:
-            continue
+        
+        if not lastInFirstOutState in closedSet:
             
-        closedSet.add(lastInFirstOutState)
-            # print('In closedSet : ',closedSet)
-        
-        successorsList = problem.getSuccessors(lastInFirstOutState)
-        
-        for successor,action, stepCost in successorsList:
-            # print('successor',successor)
-            if not successor in closedSet:
+            closedSet.add(lastInFirstOutState)
+            successorsList = problem.getSuccessors(lastInFirstOutState)
+            
+            for successor,action, stepCost in successorsList:
+                # print('successor',successor)
                 initialPath = actionList
                 # print('action',action)
                 # print('initialPath',initialPath)
@@ -157,20 +154,14 @@ def breadthFirstSearch(problem: SearchProblem):
         
         if problem.isGoalState(firstInFirstOutState):
             return actionList
-
-        if  firstInFirstOutState in closedSet:
-            continue
         
-        closedSet.add(firstInFirstOutState)
+        if not firstInFirstOutState in closedSet:
             
-        successorsList = problem.getSuccessors(firstInFirstOutState)
-        
-        # print(QueueForBfs.list)
-        
-        
-        for successor,action, stepCost in successorsList:
-
-            if not successor in closedSet:
+            closedSet.add(firstInFirstOutState)
+            successorsList = problem.getSuccessors(firstInFirstOutState)
+            
+            for successor,action, stepCost in successorsList:
+                
                 initialPath = actionList
                 sucessorPath = [action]
                 updatedPath = [*initialPath,*sucessorPath] 
@@ -199,20 +190,14 @@ def uniformCostSearch(problem: SearchProblem):
         if problem.isGoalState(cheapestState):
             return actionList
 
-        if cheapestState in closedSet:
-            continue
-        
-        closedSet.add(cheapestState)
-               
-        successorsList = problem.getSuccessors(cheapestState)
-        # print('This is heap: ',pqueueForUCS.heap)
-        # As seen from util that priority queue stores [cost,count,stateActionListTuple]
-        checkingStateinPrQueueForUcs = [stateAndActions[0] for cost,count,stateAndActions in pqueueForUCS.heap]
-
-        for successor,action, stepCost in successorsList:
-
-            if not successor in closedSet :
                 
+        if not cheapestState in closedSet:
+            
+            closedSet.add(cheapestState)
+            successorsList = problem.getSuccessors(cheapestState)
+            
+            for successor,action, stepCost in successorsList:
+
                 initialPath = actionList
                 sucessorPath = [action]
                 updatedPath = [*initialPath,*sucessorPath] 
@@ -223,9 +208,6 @@ def uniformCostSearch(problem: SearchProblem):
                 
             
                     
-                
-    
-    
     util.raiseNotDefined()
     return finalActionList
 
@@ -260,15 +242,12 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
         if problem.isGoalState(cheapestState):
             return actionList
 
-        if cheapestState in closedSet:
-            continue
-        
-        closedSet.add(cheapestState)    
+        if not cheapestState in closedSet:
             
-        successorsList = problem.getSuccessors(cheapestState)
-        
-        for successor,action, stepCost in successorsList:
-            if not successor in closedSet :
+            closedSet.add(cheapestState) 
+            successorsList = problem.getSuccessors(cheapestState)
+            
+            for successor,action, stepCost in successorsList:
                 
                 initialPath = actionList
                 sucessorPath = [action]
