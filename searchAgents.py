@@ -528,20 +528,20 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
 
     for foodCordinate in foodCoordinatesList:
-        # heuristicDistance = util.manhattanDistance(position,foodCordinate)
-        # Tried manhattanDistance heuristic but,
-        # max of Manhattan Distace heuristic expanded 9551 nodes and was failing food_heuristic_grade_tricky.test
-        # this is because Manhattan Distance heuristic is not taking into consideration the fact that there are walls within the maze
-        # Hence, expands unecessary nodes.
-        
-        heuristicDistance = mazeDistance(position,foodCordinate,problem.startingGameState)
-        # max of mazeDistance heuristic expanded 4137 nodes and passed all test cases !
-        # this is because Maze Distance heuristic is taking into consideration the fact that there are walls within the maze
-        # Hence, prevents expansion of uneccessary nodes.
-        
+        heuristicDistance = util.manhattanDistance(position,foodCordinate)
         finalDistanceList.append(heuristicDistance)
 
-    heuristicVal = max(finalDistanceList)
+    maxheuristicVal = max(finalDistanceList)
+    minheuristicVal = min(finalDistanceList)
+    
+    
+    heuristicVal = (maxheuristicVal+0.5*minheuristicVal)/2
+
+
+    
+            
+   
+    # print(heuristicVal)
     return heuristicVal
     # return 0
 
