@@ -535,13 +535,8 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     minheuristicVal = min(finalDistanceList)
     
     
-    heuristicVal = (maxheuristicVal+0.5*minheuristicVal)/2
+    heuristicVal = (maxheuristicVal+minheuristicVal)/2
 
-
-    
-            
-   
-    # print(heuristicVal)
     return heuristicVal
     # return 0
 
