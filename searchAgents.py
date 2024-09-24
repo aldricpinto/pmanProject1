@@ -296,6 +296,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+        # Here initially, all 4 corners of the grid are not explored thus, the tuple looks like : (0,0,0,0)
         return (self.startingPosition , (0, 0, 0, 0))
         util.raiseNotDefined()
 
@@ -305,6 +306,11 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         currState,toCheckcornersTuple = state
+        
+        # Here, toCheckcornersTuple will always be of the form (0,0,1,1) where 0 represnts corner that is not visited
+        # 1 represents corner that is visited. So, if there exists any single 0 entry in the tuple, this will mean that we haven't explored all corners
+        # Hence, we haven't reached our goal i.e (1,1,1,1).
+        
         for corner in toCheckcornersTuple:
             if corner == 0:
                 return False
@@ -324,7 +330,10 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        
+        # I'm using Hint 2 given for Q5 and setting cost = 1 for every successor appended to successors
         cost = 1
+        
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -420,7 +429,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     
     # returning max(finalDistanceList) as the heuristic resulted in expansion of 1136 nodes
     # This is because max provides a broader picture and makes the agent want to advance to a state to reach the furthest corner,
-    # than just focussing on a nearer corner and exploring less promising paths that appear to be optimal at first but actually aren't !
+    # than just focussing on a nearer corner and exploring less promising paths that appear to be optimal at first but actually aren't. Thus, providing a better guess than the min distance !
     return heuristicVal
 
     #return 0 # Default to trivial solution
@@ -569,7 +578,8 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        uniformCostSearchResult = search.bfs(problem)
+        # I'm using UCS so that an optimal path is returned
+        uniformCostSearchResult = search.ucs(problem)
         return uniformCostSearchResult
         util.raiseNotDefined()
 
@@ -607,7 +617,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        # I will have to check if the given state has food by matching co-ordinates of state with co-ordinates of food
+        # I will have to check if the given state has food, by matching co-ordinates of state with co-ordinates of food
         foodCordinates = self.food.asList()
         for foodCoordinate in foodCordinates:
             if foodCoordinate == state:

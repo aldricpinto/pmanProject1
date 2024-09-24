@@ -224,6 +224,11 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    
+    '''
+    For open maze problem, nullHeuristic expanded 682 nodes and path was found with total cot of 54.
+    For ManhattanHeuristic 535 nodes were expanded and path was found with total cost of 54.
+    '''
     finalActionList = []
     
     # Fringe representation for A* used is : 'PriorityQueue'
