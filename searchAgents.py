@@ -557,8 +557,6 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     # minheuristicVal = min(finalDistanceList)
     # maxheuristicVal = (max(finalDistanceList)+min(finalDistanceList))/2
     
-    
-    # heuristicVal = maxheuristicVal
     heuristicVal = maxheuristicVal
     '''
     Returning maxheuristicVal (9551 nodes expanded) serves as a better heuristic as opposed to :
