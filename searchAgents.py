@@ -437,10 +437,11 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     
     
     heuristicVal = max(finalDistanceList)
-    
-    # returning max(finalDistanceList) as the heuristic resulted in expansion of 1136 nodes
-    # This is because max provides a broader picture and makes the agent want to advance to a state to reach the furthest corner,
-    # than just focussing on a nearer corner and exploring less promising paths that appear to be optimal at first but actually aren't. Thus, providing a better guess than the min distance !
+    '''
+    returning max(finalDistanceList) as the heuristic resulted in expansion of 1136 nodes
+    This is because max provides a broader picture and makes the agent want to advance to a state to reach the furthest corner,
+    than just focussing on a nearer corner and exploring less promising paths that appear to be optimal at first but actually aren't. Thus, providing a better guess than the min distance !
+    '''
     return heuristicVal
 
     #return 0 # Default to trivial solution
