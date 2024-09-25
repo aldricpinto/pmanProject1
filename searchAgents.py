@@ -305,16 +305,24 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        
         currState,toCheckcornersTuple = state
         
-        # Here, toCheckcornersTuple will always be of the form (0,0,1,1) where 0 represnts corner that is not visited
-        # 1 represents corner that is visited. So, if there exists any single 0 entry in the tuple, this will mean that we haven't explored all corners
-        # Hence, we haven't reached our goal i.e (1,1,1,1).
+        '''
+        Our Goal is to visit all 4 corners of the Grid because the food is present at all 4 corners. 
+        So, if Pacman vists all 4 corners, then we have achieved our Goal State.
+        Here, toCheckcornersTuple will always be of the form (x,y,z,w) tuple where x,y,z,q can be 0 or 1 . 
+        So, if there exists any single 0 entry within the tuple, this will mean that we haven't explored all corners
+        and, we haven't reached our goal i.e (1,1,1,1). So we return 0 else 1.
+        '''
         
-        for corner in toCheckcornersTuple:
-            if corner == 0:
-                return False
-        return True
+        visitedOrNot = 0
+        if visitedOrNot in toCheckcornersTuple:
+            return visitedOrNot
+        else:
+            visitedOrNot = 1
+            return visitedOrNot
+        
         util.raiseNotDefined()
         
 
@@ -352,10 +360,13 @@ class CornersProblem(search.SearchProblem):
             
             if not hitsWall:
                 nextState = (nextx, nexty)
-                # print('This is nxt : ' ,self.corners)
                 
-                # Here I'm checking if the next State (nextState) is a corner or not
-                # If it is a corner then, I'm setting the croner as visited (1) for that successor state
+                '''
+                Here I'm checking if the next State (nextState) is a corner or not
+                If it is a corner then, I'm setting the croner as visited (1) for that successor state
+                
+                '''
+                
                 for corner in self.corners:
                     if nextState == corner:
                         indexToSetTrue = self.corners.index(corner)
@@ -541,11 +552,16 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
         finalDistanceList.append(heuristicDistance)
 
     maxheuristicVal = max(finalDistanceList)
-    minheuristicVal = min(finalDistanceList)
+    # minheuristicVal = min(finalDistanceList)
     
     
-    heuristicVal = (maxheuristicVal+minheuristicVal)/2
-
+    # heuristicVal = maxheuristicVal
+    heuristicVal = maxheuristicVal
+    '''
+    Returning maxheuristicVal (9551 nodes expanded) serves as a better heuristic as opposed to
+    returning minheuristicVal (13898 nodes expanded) for the same reason as cornersHeuristic, 
+    the only difference is that its food in this case instead of corners.
+    '''
     return heuristicVal
     # return 0
 
@@ -618,13 +634,15 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 
         "*** YOUR CODE HERE ***"
         # I will have to check if the given state has food, by matching co-ordinates of state with co-ordinates of food
+        foodOrNot = 0
         foodCordinates = self.food.asList()
         for foodCoordinate in foodCordinates:
             if foodCoordinate == state:
-                return True
+                foodOrNot = 1
+                return foodOrNot
             
                 
-        return False
+        return foodOrNot
         util.raiseNotDefined()
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
