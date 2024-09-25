@@ -351,7 +351,7 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
             
             "*** YOUR CODE HERE ***"
-            
+            #used above code for figuring out whether a new position hits a wall
             currState,toCheckcornersTuple = state
             x,y = currState
             dx, dy = Actions.directionToVector(action)
