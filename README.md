@@ -131,28 +131,37 @@ def load_model_with_checksum(path):
 
 ---
 
-## Improvement 5 — Replace Hardcoded Fusion Weights with Auto-Calibration
+## Improvement 5 — Stop Guessing the Blending Weights Between the Two Prediction Models
 
 **File:** `MarketMindServer/app/predictors/platform_predictor.py` (lines 20–22)
 
 **What the system does:**  
-The `FusionPredictor` blends the Platform model's prediction with the Content model's prediction using weights of `0.7` (platform) and `0.3` (content). These values are hardcoded.
+When you run a prediction, the system actually uses **two models** to produce a final answer:
+- **Model A (Platform History):** Looks at past ad spend on Google, Meta, etc. and predicts CTR.
+- **Model B (Ad Text/Content):** Looks at the quality of the ad copy and predicts CTR.
+
+It then blends them: `Final CTR = 70% of Model A + 30% of Model B`. These weights (`0.7` and `0.3`) are what control how much each model is trusted.
 
 **The problem:**  
-There is an open `TODO` comment in the code confirming these values were never validated. Using arbitrary weights without calibration means the final prediction quality is unknown and cannot be trusted in a production context.
-
-**Recommended improvement:**  
-Use the held-out test set from training to find the optimal weight ratio by minimizing prediction error. This can be done once at training time and the optimal weights stored alongside the `.pkl` files.
+These numbers were **never tested**. There is literally a `TODO` comment in the code saying they need to be replaced. Someone picked `0.7` and `0.3` as a starting guess and it was never revisited. This means the blended prediction — which is what drives the ROI output — could be systematically off in either direction with no way to know.
 
 ```python
-# Replace hardcoded default
+# Current code (line 20 in platform_predictor.py)
 w_platform = 0.7  # TODO: replace with true variance analysis
+w_content = 1.0 - w_platform
+```
 
-# With a calibrated value loaded from training logs
+**Recommended improvement:**  
+Run both models on historical test data, try different weight combinations (e.g., 50/50, 60/40, 80/20), and pick the split that produces the most accurate CTR predictions. Save the winning split to a config file so it is no longer guessed.
+
+```python
+# After calibration — load the tested, validated split instead of guessing
 w_platform = load_calibrated_weight("platform_content_weight.json")
+w_content = 1.0 - w_platform
 ```
 
 ---
+
 
 ## What Is Already Done Well
 
